@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDGC - Advanced Capital & Profit Control</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        tdgc: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            500: '#b91c1c', // Premium Vibrant Red
+                            600: '#991b1b',
+                            700: '#7f1d1d',
+                            950: '#450a0a',
+                        },
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#b91c1c',
+                            600: '#991b1b',
+                            700: '#7f1d1d',
+                        }
+                    },
+                    boxShadow: {
+                        'clean': '0 4px 20px -2px rgba(148, 163, 184, 0.08), 0 2px 8px -1px rgba(148, 163, 184, 0.04)',
+                        'clean-dark': '0 4px 20px -2px rgba(0, 0, 0, 0.3), 0 2px 8px -1px rgba(0, 0, 0, 0.2)',
+                        'hover-card': '0 10px 30px -10px rgba(148, 163, 184, 0.16)',
+                        'hover-card-dark': '0 10px 30px -10px rgba(0, 0, 0, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --brand-50: #fef2f2;
+            --brand-100: #fee2e2;
+            --brand-500: #b91c1c; 
+            --brand-600: #991b1b; 
+            --brand-700: #7f1d1d; 
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Custom scrollbar adjustments */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        /* SVG chart scaling styles */
+        .chart-path {
+            transition: d 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col relative pb-16">
+
+    <!-- Header matching image_5af693.png exactly with red TDGC logo badge -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-100 dark:border-slate-800/80 bg-white/90 dark:bg-[#0e1726]/90 backdrop-blur-md transition-all shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            
+            <!-- Brand block: TDGC logo badge + Title -->
+            <div class="flex items-center space-x-4">
+                <div id="brand-logo" class="px-4 py-2 bg-tdgc-500 text-white font-extrabold rounded-2xl shadow-lg shadow-tdgc-500/20 flex items-center justify-center transition-transform duration-300 hover:scale-105 select-none">
+                    <span class="text-lg tracking-wider">TDGC</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight text-slate-950 dark:text-white uppercase">Advanced Tracker</h1>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold tracking-widest uppercase">Capital & Profit Control</p>
+                </div>
+            </div>
+            
+            <!-- Tab Navigation Container similar to image_5af693.png -->
+            <div class="hidden md:flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/60">
+                <button onclick="switchTab('sales')" id="tab-sales-btn" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm bg-white text-tdgc-500 dark:bg-slate-900 dark:text-white">
+                    <span class="material-icons-round text-base">inventory_2</span>
+                    <span>Sales</span>
+                </button>
+                <button onclick="switchTab('partners')" id="tab-partners-btn" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                    <span class="material-icons-round text-base">people_outline</span>
+                    <span>Partners</span>
+                </button>
+                <button onclick="switchTab('games')" id="tab-games-btn" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                    <span class="material-icons-round text-base">grid_view</span>
+                    <span>Games</span>
+                </button>
+                <button onclick="switchTab('financials')" id="tab-financials-btn" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+                    <span class="material-icons-round text-base">analytics</span>
+                    <span>Financials</span>
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Theme Mode Toggle -->
+                <button id="theme-mode-toggle" class="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 transition-all" title="Toggle Light/Dark Theme">
+                    <span id="theme-mode-icon" class="material-icons-round text-lg block">light_mode</span>
+                </button>
+                <!-- Quick Seed Demo Tool -->
+                <button onclick="populateDemoData()" class="hidden sm:flex items-center space-x-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-tdgc-50 dark:hover:bg-tdgc-950/20 text-slate-600 dark:text-slate-300 rounded-xl transition-all text-xs font-semibold" title="Populate visual demo records instantly">
+                    <span class="material-icons-round text-sm">auto_awesome</span>
+                    <span>Seed</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation bar -->
+        <div class="flex md:hidden justify-around bg-slate-50 dark:bg-[#0e1726] border-t border-slate-150 dark:border-slate-800/80 p-2">
+            <button onclick="switchTab('sales')" class="mobile-tab flex flex-col items-center text-tdgc-500" id="m-tab-sales">
+                <span class="material-icons-round text-lg">inventory_2</span>
+                <span class="text-[10px] font-bold">Sales</span>
+            </button>
+            <button onclick="switchTab('partners')" class="mobile-tab flex flex-col items-center text-slate-400" id="m-tab-partners">
+                <span class="material-icons-round text-lg">people_outline</span>
+                <span class="text-[10px] font-bold">Partners</span>
+            </button>
+            <button onclick="switchTab('games')" class="mobile-tab flex flex-col items-center text-slate-400" id="m-tab-games">
+                <span class="material-icons-round text-lg">grid_view</span>
+                <span class="text-[10px] font-bold">Games</span>
+            </button>
+            <button onclick="switchTab('financials')" class="mobile-tab flex flex-col items-center text-slate-400" id="m-tab-financials">
+                <span class="material-icons-round text-lg">analytics</span>
+                <span class="text-[10px] font-bold">Financials</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-6 space-y-6">
+
+        <!-- Tab 1: Sales (Core layout shown in image_5af693.png) -->
+        <section id="section-sales" class="space-y-6">
+            
+            <!-- Quick Stats Summary Cards Block -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-[#0e1726] p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Total Sales</span>
+                        <h3 id="stat-sales" class="text-lg font-extrabold">₱0.00</h3>
+                    </div>
+                    <div class="p-2 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 rounded-xl">
+                        <span class="material-icons-round text-lg block">trending_up</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-[#0e1726] p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Total Capital</span>
+                        <h3 id="stat-capital" class="text-lg font-extrabold text-slate-500">₱0.00</h3>
+                    </div>
+                    <div class="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-xl">
+                        <span class="material-icons-round text-lg block">payments</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-[#0e1726] p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Net Profit</span>
+                        <h3 id="stat-profit" class="text-lg font-extrabold text-tdgc-500">₱0.00</h3>
+                    </div>
+                    <div class="p-2 bg-red-50 dark:bg-red-950/20 text-tdgc-500 rounded-xl">
+                        <span class="material-icons-round text-lg block">paid</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-[#0e1726] p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex justify-between items-center">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Margin Avg</span>
+                        <h3 id="stat-margin" class="text-lg font-extrabold text-amber-500">0.0%</h3>
+                    </div>
+                    <div class="p-2 bg-amber-50 dark:bg-amber-950/20 text-amber-600 rounded-xl">
+                        <span class="material-icons-round text-lg block">percent</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Creator Block matching the layout of image_5af693.png exactly -->
+            <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean dark:shadow-clean-dark">
+                <div class="border-b border-slate-100 dark:border-slate-800/80 pb-3 mb-6">
+                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">New Transaction</span>
+                </div>
+
+                <form id="record-form" class="space-y-6">
+                    <!-- Flex Grid matching visual columns of image_5af693.png -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+                        
+                        <!-- Customer Column with Datalist for manual/auto select -->
+                        <div class="md:col-span-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label id="customer-label" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Customer</label>
+                            </div>
+                            <input type="text" id="form-customer-input" list="customer-list" required placeholder="Type name or select..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-tdgc-500/20 focus:border-tdgc-500 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                            <datalist id="customer-list"></datalist>
+                        </div>
+
+                        <!-- Game Selector Column with Datalist -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Game</label>
+                            <input type="text" id="form-game-input" list="game-list" oninput="updateProductList()" required placeholder="Type or select game..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-tdgc-500/20 focus:border-tdgc-500 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                            <datalist id="game-list"></datalist>
+                        </div>
+
+                        <!-- Product Selector Input Box with Datalist -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Product & SKU</label>
+                            <input type="text" id="form-product-input" list="product-list" oninput="autoFillPriceAndCapital()" required placeholder="Type product/SKU..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-tdgc-500/20 focus:border-tdgc-500 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                            <datalist id="product-list"></datalist>
+                        </div>
+
+                        <!-- Capital (Cost) input matching image border indicators -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Capital (Cost)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-3 text-slate-400 text-xs font-semibold">₱</span>
+                                <input type="number" id="form-cost-input" step="0.01" required placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-red-200 dark:border-red-950/50 focus:border-red-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-500/10 text-xs font-semibold text-slate-800 dark:text-slate-100">
+                            </div>
+                        </div>
+
+                        <!-- Selling Price input matching image border indicators -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block">Selling Price</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-3 text-slate-400 text-xs font-semibold">₱</span>
+                                <input type="number" id="form-sale-input" step="0.01" required placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-800/60 border border-emerald-200 dark:border-emerald-950/50 focus:border-emerald-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/10 text-xs font-semibold text-slate-800 dark:text-slate-100">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Toggle Customer State Action & Large Button block -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center pt-2 gap-4">
+                        <button type="button" onclick="toggleCustomerMode()" id="customer-mode-toggle" class="text-[11px] text-tdgc-500 hover:text-tdgc-600 dark:text-red-400 font-extrabold uppercase tracking-wider hover:underline flex items-center space-x-1">
+                            <span class="material-icons-round text-sm">swap_horiz</span>
+                            <span id="mode-toggle-text">Switch to End Buyer</span>
+                        </button>
+                        
+                        <button type="submit" class="w-full sm:w-auto px-10 py-3.5 bg-tdgc-500 hover:bg-tdgc-600 text-white font-extrabold uppercase tracking-wider rounded-2xl text-xs transition-all duration-200 shadow-md shadow-tdgc-500/20 active:scale-[0.98] flex items-center justify-center space-x-2">
+                            <span class="material-icons-round text-base">check_circle</span>
+                            <span>Save Record</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Database & Ledger matching visual layout -->
+            <div class="bg-white dark:bg-[#0e1726] rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean dark:shadow-clean-dark overflow-hidden">
+                
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800/80 space-y-4">
+                    <!-- Real-time dynamic search bar -->
+                    <div class="relative">
+                        <span class="absolute left-4 top-3.5 material-icons-round text-slate-400 dark:text-slate-500 text-lg">search</span>
+                        <input type="text" id="order-search" oninput="refreshLedgerView()" placeholder="Search orders..." class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/85 rounded-2xl focus:outline-none focus:ring-2 focus:ring-tdgc-500/10 focus:border-tdgc-500 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    </div>
+                </div>
+
+                <!-- Ledger Database Table matching columns exactly -->
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full min-w-[750px] text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50 dark:bg-slate-800/20 text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800/80">
+                                <th class="py-4 px-6">Invoice / Date</th>
+                                <th class="py-4 px-6">Customer / Game</th>
+                                <th class="py-4 px-6 text-right">Capital</th>
+                                <th class="py-4 px-6 text-right">Selling Price</th>
+                                <th class="py-4 px-6 text-right">Net Profit</th>
+                                <th class="py-4 px-6 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-rows" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-medium">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Table Empty State Placeholder -->
+                    <div id="ledger-empty-state" class="hidden flex flex-col items-center justify-center py-20 px-6 space-y-4">
+                        <span class="material-icons-round text-slate-200 dark:text-slate-800 text-6xl">cloud_off</span>
+                        <div class="text-center">
+                            <p class="text-sm font-bold text-slate-400 dark:text-slate-500">No Records Found</p>
+                            <p class="text-[11px] text-slate-400/85">Add some transactions using the form above to configure tracking indicators.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simple interactive chart display below ledger to keep previous analytic depth -->
+            <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean dark:shadow-clean-dark">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sales & Profit Trend Analysis</h4>
+                        <p class="text-[10px] text-slate-400 font-medium">Recalculated dynamically upon ledger updates</p>
+                    </div>
+                    <div class="flex items-center space-x-3 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="flex items-center space-x-1"><span class="w-2.5 h-1 bg-tdgc-500 rounded-full"></span><span class="text-slate-500">Revenue</span></span>
+                        <span class="flex items-center space-x-1"><span class="w-2.5 h-1 bg-emerald-500 rounded-full"></span><span class="text-slate-500">Profit</span></span>
+                    </div>
+                </div>
+                <div class="h-48 w-full relative" id="chart-panel-parent">
+                    <svg id="trend-svg" class="w-full h-full cursor-crosshair overflow-visible">
+                        <defs>
+                            <linearGradient id="g-rev" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--brand-500)" stop-opacity="0.12" />
+                                <stop offset="100%" stop-color="var(--brand-500)" stop-opacity="0.00" />
+                            </linearGradient>
+                            <linearGradient id="g-prof" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#10b981" stop-opacity="0.12" />
+                                <stop offset="100%" stop-color="#10b981" stop-opacity="0.00" />
+                            </linearGradient>
+                        </defs>
+                        <g id="chart-y-axis-lines"></g>
+                        <path id="area-rev" fill="url(#g-rev)" class="chart-path" d="" />
+                        <path id="area-prof" fill="url(#g-prof)" class="chart-path" d="" />
+                        <path id="line-rev" fill="none" stroke="var(--brand-500)" stroke-width="2.5" class="chart-path" />
+                        <path id="line-prof" fill="none" stroke="#10b981" stroke-width="2.5" class="chart-path" />
+                    </svg>
+                    <div id="chart-dates-labels" class="absolute bottom-[-15px] left-0 right-0 flex justify-between px-2 text-[9px] font-bold text-slate-400 tracking-wider pointer-events-none"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Tab 2: Partners Management (Expansion view for visual fidelity) -->
+        <section id="section-partners" class="hidden space-y-6">
+            <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-sm font-extrabold uppercase tracking-wider">Partners Registry</h3>
+                        <p class="text-xs text-slate-400">Configure Resellers and End Buyers to select dynamically in your sales journal</p>
+                    </div>
+                    <button onclick="openNewPartnerModal()" class="px-4 py-2 bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-bold rounded-xl text-xs flex items-center space-x-1.5 hover:opacity-90">
+                        <span class="material-icons-round text-sm">person_add</span>
+                        <span>Add Partner</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="partners-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 3: Games Catalog (Expansion view for visual fidelity) -->
+        <section id="section-games" class="hidden space-y-6">
+            <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-sm font-extrabold uppercase tracking-wider">Supported Games & Rates</h3>
+                        <p class="text-xs text-slate-400">Manage rates, diamond credit tokens, and default cost markups</p>
+                    </div>
+                    <button onclick="openNewGameModal()" class="px-4 py-2 bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-bold rounded-xl text-xs flex items-center space-x-1.5 hover:opacity-90">
+                        <span class="material-icons-round text-sm">library_add</span>
+                        <span>Add Game/Product</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="games-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 4: Financials Deep Analytics (Interactive performance overview) -->
+        <section id="section-financials" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean md:col-span-2 space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Gross Revenue vs Capital Margin Breakdown</h3>
+                    <div class="h-64 flex items-end justify-between px-4 pb-4 border-b border-slate-100 dark:border-slate-800" id="financials-bar-chart">
+                        <!-- Populated dynamically with bar graph representation -->
+                    </div>
+                    <div class="flex justify-between text-[10px] font-bold text-slate-400 tracking-wider px-2">
+                        <span>MLBB</span>
+                        <span>Valorant</span>
+                        <span>Roblox</span>
+                        <span>CoC</span>
+                        <span>Robux Tokens</span>
+                        <span>Steam Wallet</span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-[#0e1726] p-6 rounded-3xl border border-slate-150 dark:border-slate-800/50 shadow-clean space-y-6">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Capital Protection Status</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Operational Cost Guard</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Target capital is securely stored locally</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Total Reseller Credits Active</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300" id="active-reseller-credits">₱0.00</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">System Integrity</span>
+                            <span class="text-xs font-semibold text-emerald-500 flex items-center space-x-1 mt-1">
+                                <span class="material-icons-round text-sm">verified_user</span>
+                                <span>PHP Currency Rates Configured</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Beautiful notification elegant toast element -->
+    <div id="toast-wrapper" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center p-4 space-x-3 bg-slate-900/95 dark:bg-slate-50 text-slate-100 dark:text-slate-900 rounded-2xl shadow-2xl border border-slate-800/80 dark:border-slate-200">
+        <span id="toast-icon-symbol" class="material-icons-round text-tdgc-500 text-lg">info</span>
+        <span id="toast-message-body" class="text-xs font-semibold tracking-wide">Record added!</span>
+    </div>
+
+    <!-- Floating Secure Badge & Chat Element matching bottom-right indicator in image_5af693.png -->
+    <div class="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
+        <!-- Secure Ledger Indicator Badge -->
+        <div class="bg-tdgc-500 text-white px-4 py-2.5 rounded-2xl shadow-xl flex items-center space-x-1.5 text-[11px] font-extrabold uppercase tracking-wider select-none animate-pulse">
+            <span class="material-icons-round text-base">shield</span>
+            <span>Ledger Secured</span>
+        </div>
+        <!-- Support Chat Action bubble -->
+        <button onclick="toggleSupportChat()" class="p-3 bg-tdgc-500 text-white rounded-full shadow-2xl hover:bg-tdgc-600 active:scale-95 transition-all flex items-center justify-center">
+            <span class="material-icons-round text-2xl">chat_bubble</span>
+        </button>
+    </div>
+
+    <!-- Chat Dialog Window Drawer -->
+    <div id="chat-panel" class="fixed bottom-24 right-6 w-80 bg-white dark:bg-[#0e1726] border border-slate-150 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-50 hidden">
+        <div class="p-4 bg-tdgc-500 text-white flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-wider flex items-center space-x-1.5">
+                <span class="material-icons-round text-sm">bolt</span>
+                <span>TDGC Assistant</span>
+            </span>
+            <button onclick="toggleSupportChat()" class="text-white hover:opacity-80">
+                <span class="material-icons-round text-base">close</span>
+            </button>
+        </div>
+        <div class="p-4 h-48 overflow-y-auto space-y-2 text-xs" id="chat-messages">
+            <div class="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl max-w-[85%] text-slate-600 dark:text-slate-300">
+                Hi! Need help managing your capital, reseller credits, or ledger backups? Ask away!
+            </div>
+        </div>
+        <div class="p-3 border-t border-slate-100 dark:border-slate-800 flex space-x-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none">
+            <button onclick="sendChatMessage()" class="p-2 bg-tdgc-500 text-white rounded-xl hover:bg-tdgc-600"><span class="material-icons-round text-xs block">send</span></button>
+        </div>
+    </div>
+
+    <!-- Modal Dialogs Layer -->
+    <!-- Modal 1: Add New Partner dialog -->
+    <div id="modal-partner" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onclick="closePartnerModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-[#0e1726] border border-slate-150 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h3 class="text-sm font-bold uppercase tracking-wider">Register Partner</h3>
+                <button onclick="closePartnerModal()"><span class="material-icons-round text-base text-slate-400">close</span></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Partner Name</label>
+                    <input type="text" id="p-name" placeholder="Johnathan Doe" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Partner Type</label>
+                    <select id="p-role" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                        <option value="Reseller">Reseller (Bulk Distributor)</option>
+                        <option value="End Buyer">End Buyer (Individual)</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="savePartner()" class="w-full py-2.5 bg-tdgc-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">Add Registry</button>
+        </div>
+    </div>
+
+    <!-- Modal 2: Add New Game/Product rate Dialog -->
+    <div id="modal-game" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onclick="closeGameModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-[#0e1726] border border-slate-150 dark:border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+                <h3 class="text-sm font-bold uppercase tracking-wider">Register Product & Rates</h3>
+                <button onclick="closeGameModal()"><span class="material-icons-round text-base text-slate-400">close</span></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Game Name</label>
+                    <input type="text" id="g-name" placeholder="E.g., Mobile Legends" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Product sku / Name</label>
+                    <input type="text" id="g-sku" placeholder="E.g., 500 Credits" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Default Cost (₱)</label>
+                        <input type="number" id="g-cost" placeholder="350" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Retail Selling (₱)</label>
+                        <input type="number" id="g-retail" placeholder="480" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs focus:outline-none">
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveGameRate()" class="w-full py-2.5 bg-tdgc-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">Save SKU Rate</button>
+        </div>
+    </div>
+
+    <!-- State Management Script -->
+    <script>
+        // Storage Registry Keys
+        const KEY_SALES = 'tdgc_sales_ledger_db';
+        const KEY_PARTNERS = 'tdgc_partners_list_db';
+        const KEY_PRODUCTS = 'tdgc_product_rates_db';
+
+        // Pre-seeded Partner Registry to quickly align with TDGC design
+        const SEEDED_PARTNERS = [
+            { id: 1, name: 'Alex Johnson', role: 'Reseller' },
+            { id: 2, name: 'Clara Oswald', role: 'Reseller' },
+            { id: 3, name: 'Rory Williams', role: 'End Buyer' },
+            { id: 4, name: 'Emma Watson', role: 'Reseller' },
+            { id: 5, name: 'Markus Vance', role: 'End Buyer' }
+        ];
+
+        // Seeded games and rates matching dynamic credits catalog
+        const SEEDED_PRODUCTS = [
+            { id: 1, game: 'Mobile Legends', sku: '500 Credits Token', cost: 400.00, retail: 500.00 },
+            { id: 2, game: 'Mobile Legends', sku: '1000 Credits Token', cost: 780.00, retail: 950.00 },
+            { id: 3, game: 'Valorant', sku: '1250 VP Package', cost: 450.00, retail: 550.00 },
+            { id: 4, game: 'Roblox', sku: '800 Robux Card', cost: 480.00, retail: 600.00 },
+            { id: 5, game: 'Steam Wallet', sku: '₱500 Credits Vouchers', cost: 470.00, retail: 500.00 }
+        ];
+
+        // Seeded sales log records mirroring screenshot aesthetics
+        const SEEDED_SALES = [
+            { id: 101, invoice: '#INV-2026-401', date: '2026-07-06', customer: 'Emma Watson', type: 'Reseller', game: 'Mobile Legends', sku: '1000 Credits Token', cost: 780.00, sale: 950.00 },
+            { id: 102, invoice: '#INV-2026-402', date: '2026-07-08', customer: 'Rory Williams', type: 'End Buyer', game: 'Valorant', sku: '1250 VP Package', cost: 450.00, sale: 550.00 },
+            { id: 103, invoice: '#INV-2026-403', date: '2026-07-09', customer: 'Alex Johnson', type: 'Reseller', game: 'Roblox', sku: '800 Robux Card', cost: 480.00, sale: 600.00 },
+            { id: 104, invoice: '#INV-2026-404', date: '2026-07-11', customer: 'Markus Vance', type: 'End Buyer', game: 'Steam Wallet', sku: '₱500 Credits Vouchers', cost: 470.00, sale: 500.00 }
+        ];
+
+        // Initializing Local databases
+        let salesDB = JSON.parse(localStorage.getItem(KEY_SALES)) || SEEDED_SALES;
+        let partnersDB = JSON.parse(localStorage.getItem(KEY_PARTNERS)) || SEEDED_PARTNERS;
+        let productRatesDB = JSON.parse(localStorage.getItem(KEY_PRODUCTS)) || SEEDED_PRODUCTS;
+
+        // Form Control: Current Customer Target mode (Reseller vs End Buyer)
+        let currentCustomerMode = 'Reseller'; // default
+
+        // Handle Customer State Toggles
+        function toggleCustomerMode() {
+            const toggleText = document.getElementById('mode-toggle-text');
+            const labelText = document.getElementById('customer-label');
+            
+            if (currentCustomerMode === 'Reseller') {
+                currentCustomerMode = 'End Buyer';
+                toggleText.textContent = 'Switch to Reseller';
+                labelText.textContent = 'Customer (End Buyer)';
+                displayToast("Switched to End Buyer pricing target", "swap_horiz");
+            } else {
+                currentCustomerMode = 'Reseller';
+                toggleText.textContent = 'Switch to End Buyer';
+                labelText.textContent = 'Customer (Select Reseller)';
+                displayToast("Switched to Reseller pricing target", "swap_horiz");
+            }
+
+            refreshCustomerDropdown();
+        }
+
+        // Initialize active light/dark theme tracking
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-mode-icon').textContent = 'dark_mode';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.getElementById('theme-mode-icon').textContent = 'light_mode';
+        }
+
+        document.getElementById('theme-mode-toggle').addEventListener('click', () => {
+            const rootClass = document.documentElement.classList;
+            if (rootClass.contains('dark')) {
+                rootClass.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('theme-mode-icon').textContent = 'light_mode';
+            } else {
+                rootClass.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('theme-mode-icon').textContent = 'dark_mode';
+            }
+            renderSvgTrendChart();
+        });
+
+        // Switch custom interface tabs elegantly
+        function switchTab(tabId) {
+            const tabs = ['sales', 'partners', 'games', 'financials'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`section-${t}`);
+                const btn = document.getElementById(`tab-${t}-btn`);
+                const mob = document.getElementById(`m-tab-${t}`);
+                
+                if (t === tabId) {
+                    sec.classList.remove('hidden');
+                    if (btn) {
+                        btn.className = "flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm bg-white text-tdgc-500 dark:bg-slate-900 dark:text-white";
+                    }
+                    if (mob) {
+                        mob.classList.remove('text-slate-400');
+                        mob.classList.add('text-tdgc-500');
+                    }
+                } else {
+                    sec.classList.add('hidden');
+                    if (btn) {
+                        btn.className = "flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
+                    }
+                    if (mob) {
+                        mob.classList.remove('text-tdgc-500');
+                        mob.classList.add('text-slate-400');
+                    }
+                }
+            });
+
+            if (tabId === 'financials') {
+                renderFinancialsData();
+            } else if (tabId === 'partners') {
+                renderPartnersView();
+            } else if (tabId === 'games') {
+                renderGamesGrid();
+            }
+        }
+
+        // Dropdown dynamic update configurations
+        function refreshCustomerDropdown() {
+            const list = document.getElementById('customer-list');
+            list.innerHTML = '';
+            
+            const filtered = partnersDB.filter(p => p.role === currentCustomerMode);
+            
+            filtered.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.name;
+                list.appendChild(opt);
+            });
+        }
+
+        function refreshGamesDropdowns() {
+            const listGame = document.getElementById('game-list');
+            listGame.innerHTML = '';
+
+            // Extract unique game list values
+            const games = [...new Set(productRatesDB.map(p => p.game))];
+            
+            games.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                listGame.appendChild(opt);
+            });
+
+            updateProductList();
+        }
+
+        function updateProductList() {
+            const selectedGame = document.getElementById('form-game-input').value;
+            const listProduct = document.getElementById('product-list');
+            listProduct.innerHTML = '';
+
+            const skus = productRatesDB.filter(p => p.game.toLowerCase() === selectedGame.toLowerCase());
+            skus.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.sku;
+                listProduct.appendChild(opt);
+            });
+
+            autoFillPriceAndCapital();
+        }
+
+        function autoFillPriceAndCapital() {
+            const selectedGame = document.getElementById('form-game-input').value;
+            const selectedSku = document.getElementById('form-product-input').value;
+            
+            const match = productRatesDB.find(p => p.game.toLowerCase() === selectedGame.toLowerCase() && p.sku.toLowerCase() === selectedSku.toLowerCase());
+            if (match) {
+                document.getElementById('form-cost-input').value = match.cost;
+                document.getElementById('form-sale-input').value = match.retail;
+            }
+        }
+
+        // Submitting Form logic
+        document.getElementById('record-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const customer = document.getElementById('form-customer-input').value.trim();
+            const game = document.getElementById('form-game-input').value.trim();
+            const sku = document.getElementById('form-product-input').value.trim();
+            const cost = parseFloat(document.getElementById('form-cost-input').value);
+            const sale = parseFloat(document.getElementById('form-sale-input').value);
+
+            if (!customer || !game || !sku || isNaN(cost) || isNaN(sale)) {
+                displayToast("Please fill all required records", "error");
+                return;
+            }
+
+            // Auto-register partner if they don't exist yet!
+            const partnerExists = partnersDB.some(p => p.name.toLowerCase() === customer.toLowerCase());
+            if (!partnerExists) {
+                partnersDB.push({
+                    id: Date.now(),
+                    name: customer,
+                    role: currentCustomerMode
+                });
+                localStorage.setItem(KEY_PARTNERS, JSON.stringify(partnersDB));
+                refreshCustomerDropdown();
+                renderPartnersView();
+            }
+
+            // Auto-register product rate if it doesn't exist yet!
+            const productExists = productRatesDB.some(p => p.game.toLowerCase() === game.toLowerCase() && p.sku.toLowerCase() === sku.toLowerCase());
+            if (!productExists) {
+                productRatesDB.push({
+                    id: Date.now() + 1,
+                    game: game,
+                    sku: sku,
+                    cost: cost,
+                    retail: sale
+                });
+                localStorage.setItem(KEY_PRODUCTS, JSON.stringify(productRatesDB));
+                refreshGamesDropdowns();
+                renderGamesGrid();
+            }
+
+            const prefix = "#INV-" + (new Date().getFullYear()) + "-" + Math.floor(Math.random() * 900 + 100);
+
+            const tx = {
+                id: Date.now(),
+                invoice: prefix,
+                date: new Date().toISOString().split('T')[0],
+                customer: customer,
+                type: currentCustomerMode,
+                game: game,
+                sku: sku,
+                cost: cost,
+                sale: sale
+            };
+
+            salesDB.push(tx);
+            localStorage.setItem(KEY_SALES, JSON.stringify(salesDB));
+
+            // Feedback alerts and display refresh
+            displayToast(`Transaction saved under ${prefix}!`, "check_circle");
+            
+            // Clean custom values but keep inputs ready
+            document.getElementById('form-customer-input').value = '';
+            document.getElementById('form-game-input').value = '';
+            document.getElementById('form-product-input').value = '';
+            document.getElementById('form-cost-input').value = '';
+            document.getElementById('form-sale-input').value = '';
+
+            refreshLedgerView();
+        });
+
+        // Delete recorded invoice rate
+        function deleteTransaction(id) {
+            salesDB = salesDB.filter(s => s.id !== id);
+            localStorage.setItem(KEY_SALES, JSON.stringify(salesDB));
+            displayToast("Record removed from active ledger", "delete");
+            refreshLedgerView();
+        }
+
+        // Micro-alerts logic helper
+        function displayToast(msg, icon = 'verified_user') {
+            const wrapper = document.getElementById('toast-wrapper');
+            document.getElementById('toast-message-body').textContent = msg;
+            document.getElementById('toast-icon-symbol').textContent = icon;
+            
+            wrapper.classList.remove('translate-y-20', 'opacity-0');
+            wrapper.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                wrapper.classList.remove('translate-y-0', 'opacity-100');
+                wrapper.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Render Ledger database according to image columns
+        function refreshLedgerView() {
+            const tbody = document.getElementById('ledger-rows');
+            const emptyState = document.getElementById('ledger-empty-state');
+            tbody.innerHTML = '';
+
+            const query = document.getElementById('order-search').value.toLowerCase().trim();
+
+            const filtered = salesDB.filter(s => {
+                return s.customer.toLowerCase().includes(query) ||
+                       s.game.toLowerCase().includes(query) ||
+                       s.sku.toLowerCase().includes(query) ||
+                       s.invoice.toLowerCase().includes(query);
+            });
+
+            // Populate dashboard quick statistic blocks
+            let totalSalesSum = 0;
+            let totalCapitalSum = 0;
+            let totalProfitSum = 0;
+
+            salesDB.forEach(s => {
+                totalSalesSum += s.sale;
+                totalCapitalSum += s.cost;
+                totalProfitSum += (s.sale - s.cost);
+            });
+
+            const marginAvg = totalSalesSum > 0 ? (totalProfitSum / totalSalesSum) * 100 : 0;
+
+            document.getElementById('stat-sales').textContent = `₱${totalSalesSum.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            document.getElementById('stat-capital').textContent = `₱${totalCapitalSum.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            document.getElementById('stat-profit').textContent = `₱${totalProfitSum.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+            document.getElementById('stat-margin').textContent = `${marginAvg.toFixed(1)}%`;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Reverse iterate to display newest transaction first
+            [...filtered].reverse().forEach(s => {
+                const profitVal = s.sale - s.cost;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/10 border-b border-slate-100 dark:border-slate-800/50 transition-colors duration-150";
+
+                tr.innerHTML = `
+                    <td class="py-4.5 px-6 font-bold text-slate-900 dark:text-white">
+                        <div>${s.invoice}</div>
+                        <div class="text-[10px] text-slate-400 font-semibold">${s.date}</div>
+                    </td>
+                    <td class="py-4.5 px-6 font-semibold">
+                        <div class="flex items-center space-x-1.5 text-slate-700 dark:text-slate-300">${escapeHTML(s.customer)}
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider ${s.type === 'Reseller' ? 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-500' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-500'}">${s.type}</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">${escapeHTML(s.game)} - ${escapeHTML(s.sku)}</div>
+                    </td>
+                    <td class="py-4.5 px-6 text-right font-mono text-slate-500 dark:text-slate-400 font-semibold">₱${s.cost.toFixed(2)}</td>
+                    <td class="py-4.5 px-6 text-right font-mono text-slate-900 dark:text-slate-100 font-bold">₱${s.sale.toFixed(2)}</td>
+                    <td class="py-4.5 px-6 text-right font-mono text-emerald-500 font-extrabold">₱${profitVal.toFixed(2)}</td>
+                    <td class="py-4.5 px-6 text-center">
+                        <button onclick="deleteTransaction(${s.id})" class="p-1.5 text-slate-400 hover:text-tdgc-500 hover:bg-tdgc-50 dark:hover:bg-tdgc-950/20 rounded-xl transition-all" title="Delete record">
+                            <span class="material-icons-round text-base block">delete</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderSvgTrendChart();
+        }
+
+        // Dynamic SVG Line chart renderer
+        function renderSvgTrendChart() {
+            const svg = document.getElementById('trend-svg');
+            const gridGroup = document.getElementById('chart-y-axis-lines');
+            const labelsBox = document.getElementById('chart-dates-labels');
+
+            gridGroup.innerHTML = '';
+            labelsBox.innerHTML = '';
+
+            const parent = document.getElementById('chart-panel-parent');
+            const w = parent.clientWidth;
+            const h = parent.clientHeight;
+
+            // Roll-up metrics by unique active dates
+            let aggregated = {};
+            salesDB.forEach(s => {
+                if (!aggregated[s.date]) {
+                    aggregated[s.date] = { sale: 0, profit: 0 };
+                }
+                aggregated[s.date].sale += s.sale;
+                aggregated[s.date].profit += (s.sale - s.cost);
+            });
+
+            const uniqueDates = Object.keys(aggregated).sort((a,b) => new Date(a) - new Date(b));
+
+            if (uniqueDates.length < 2) {
+                // Clear paths safe return
+                document.getElementById('line-rev').setAttribute('d', '');
+                document.getElementById('area-rev').setAttribute('d', '');
+                document.getElementById('line-prof').setAttribute('d', '');
+                document.getElementById('area-prof').setAttribute('d', '');
+                labelsBox.innerHTML = '<span class="mx-auto text-[10px] uppercase font-bold tracking-widest text-slate-400 italic">Configure 2+ date entries to preview custom line trends.</span>';
+                return;
+            }
+
+            // Identify scaling maximums
+            let peak = 100;
+            uniqueDates.forEach(d => {
+                if (aggregated[d].sale > peak) peak = aggregated[d].sale;
+                if (aggregated[d].profit > peak) peak = aggregated[d].profit;
+            });
+            peak = peak * 1.15; // padding top space
+
+            // Gridline creation
+            for (let i = 1; i <= 3; i++) {
+                const yPos = (i / 4) * h;
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", "0");
+                line.setAttribute("y1", yPos);
+                line.setAttribute("x2", w);
+                line.setAttribute("y2", yPos);
+                line.setAttribute("stroke", document.documentElement.classList.contains('dark') ? "#1e293b" : "#f1f5f9");
+                line.setAttribute("stroke-width", "1");
+                gridGroup.appendChild(line);
+            }
+
+            let ptsRev = [];
+            let ptsProf = [];
+
+            uniqueDates.forEach((d, idx) => {
+                const x = (idx / (uniqueDates.length - 1)) * w;
+                const yRev = h - ((aggregated[d].sale / peak) * h);
+                const yProf = h - ((aggregated[d].profit / peak) * h);
+
+                ptsRev.push({ x, y: yRev });
+                ptsProf.push({ x, y: yProf });
+
+                // Set horizontal label dates
+                const span = document.createElement('span');
+                span.textContent = formatDisplayDate(d);
+                labelsBox.appendChild(span);
+            });
+
+            // Path generation generator
+            const getPathString = (pts) => {
+                if (pts.length === 0) return '';
+                let pathStr = `M ${pts[0].x} ${pts[0].y}`;
+                for (let i = 0; i < pts.length - 1; i++) {
+                    const p0 = pts[i];
+                    const p1 = pts[i+1];
+                    const cpX1 = p0.x + (p1.x - p0.x) / 3;
+                    const cpY1 = p0.y;
+                    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+                    const cpY2 = p1.y;
+                    pathStr += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+                }
+                return pathStr;
+            };
+
+            const revLineStr = getPathString(ptsRev);
+            const profLineStr = getPathString(ptsProf);
+
+            document.getElementById('line-rev').setAttribute('d', revLineStr);
+            document.getElementById('line-prof').setAttribute('d', profLineStr);
+
+            document.getElementById('area-rev').setAttribute('d', `${revLineStr} L ${w} ${h} L 0 ${h} Z`);
+            document.getElementById('area-prof').setAttribute('d', `${profLineStr} L ${w} ${h} L 0 ${h} Z`);
+        }
+
+        // Dynamic render helpers for Partner Registry Tab
+        function renderPartnersView() {
+            const container = document.getElementById('partners-list');
+            container.innerHTML = '';
+
+            partnersDB.forEach(p => {
+                // Calculate dynamic stats
+                const partnerSales = salesDB.filter(s => s.customer === p.name);
+                const totalBought = partnerSales.reduce((acc, s) => acc + s.sale, 0);
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl flex justify-between items-start";
+                card.innerHTML = `
+                    <div class="space-y-1.5">
+                        <div class="flex items-center space-x-2">
+                            <h4 class="font-bold text-slate-800 dark:text-white">${escapeHTML(p.name)}</h4>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-slate-200/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300">${p.role}</span>
+                        </div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Aggregate Purchases: <span class="font-mono text-slate-700 dark:text-slate-200">₱${totalBought.toFixed(2)}</span></p>
+                    </div>
+                    <button onclick="removePartner(${p.id})" class="text-xs text-slate-400 hover:text-red-500 font-bold uppercase">Remove</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Dynamic render helpers for Games Grid Tab
+        function renderGamesGrid() {
+            const grid = document.getElementById('games-grid');
+            grid.innerHTML = '';
+
+            // Group rates catalog logically
+            let grouped = {};
+            productRatesDB.forEach(p => {
+                if (!grouped[p.game]) grouped[p.game] = [];
+                grouped[p.game].push(p);
+            });
+
+            Object.keys(grouped).forEach(game => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl space-y-4";
+                
+                let ratesMarkup = '';
+                grouped[game].forEach(sku => {
+                    ratesMarkup += `
+                        <div class="flex justify-between items-center text-xs py-1.5 border-b border-slate-200/50 dark:border-slate-800/30 last:border-0">
+                            <span class="text-slate-500 font-medium">${escapeHTML(sku.sku)}</span>
+                            <span class="font-mono font-bold text-slate-700 dark:text-slate-200">₱${sku.cost} / ₱${sku.retail}</span>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-extrabold text-slate-800 dark:text-white uppercase tracking-wider text-xs flex items-center space-x-1.5">
+                            <span class="w-2 h-2 rounded-full bg-tdgc-500"></span>
+                            <span>${escapeHTML(game)}</span>
+                        </h4>
+                    </div>
+                    <div class="space-y-1">
+                        ${ratesMarkup}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Dynamic render helpers for Financials Tab
+        function renderFinancialsData() {
+            const barChart = document.getElementById('financials-bar-chart');
+            barChart.innerHTML = '';
+
+            // Grouping revenue by major platforms
+            let grouped = {};
+            salesDB.forEach(s => {
+                if (!grouped[s.game]) grouped[s.game] = { rev: 0, prof: 0 };
+                grouped[s.game].rev += s.sale;
+                grouped[s.game].prof += (s.sale - s.cost);
+            });
+
+            // Render dynamic reseller credit status helper
+            let totalResellerDebt = 0;
+            salesDB.forEach(s => {
+                if (s.type === 'Reseller') {
+                    totalResellerDebt += s.sale;
+                }
+            });
+            document.getElementById('active-reseller-credits').textContent = `₱${totalResellerDebt.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+
+            // Create customized mini dynamic progress bars inside financials
+            const keys = Object.keys(grouped);
+            if (keys.length === 0) {
+                barChart.innerHTML = '<span class="m-auto text-xs text-slate-400">Add transactions to preview financial metrics.</span>';
+                return;
+            }
+
+            let maxVal = 1;
+            keys.forEach(k => {
+                if (grouped[k].rev > maxVal) maxVal = grouped[k].rev;
+            });
+
+            keys.forEach(k => {
+                const revHeight = (grouped[k].rev / maxVal) * 100;
+                const profHeight = (grouped[k].prof / maxVal) * 100;
+
+                const column = document.createElement('div');
+                column.className = "flex flex-col items-center justify-end h-full space-y-1.5 w-1/6 group relative";
+                column.innerHTML = `
+                    <!-- Popover Hover Information -->
+                    <div class="absolute bottom-full mb-2 bg-slate-900/90 text-white text-[9px] font-bold p-2 rounded-xl border border-slate-800 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 space-y-0.5">
+                        <p class="uppercase text-slate-400">${escapeHTML(k)}</p>
+                        <p>REV: ₱${grouped[k].rev.toFixed(1)}</p>
+                        <p class="text-emerald-400">PROFIT: ₱${grouped[k].prof.toFixed(1)}</p>
+                    </div>
+
+                    <div class="w-4 rounded-t-md bg-tdgc-500/20 flex flex-col justify-end h-full">
+                        <div class="w-full bg-tdgc-500 rounded-t-md transition-all duration-300" style="height: ${revHeight}%"></div>
+                    </div>
+                    <div class="w-2 rounded-t-md bg-emerald-500/20 flex flex-col justify-end h-full">
+                        <div class="w-full bg-emerald-500 rounded-t-md transition-all duration-300" style="height: ${profHeight}%"></div>
+                    </div>
+                `;
+                barChart.appendChild(column);
+            });
+        }
+
+        // Partner registry save management
+        function openNewPartnerModal() {
+            document.getElementById('modal-partner').classList.remove('hidden');
+        }
+        function closePartnerModal() {
+            document.getElementById('modal-partner').classList.add('hidden');
+        }
+        function savePartner() {
+            const name = document.getElementById('p-name').value.trim();
+            const role = document.getElementById('p-role').value;
+
+            if (!name) {
+                displayToast("Invalid partner registry details", "error");
+                return;
+            }
+
+            const p = {
+                id: Date.now(),
+                name: name,
+                role: role
+            };
+
+            partnersDB.push(p);
+            localStorage.setItem(KEY_PARTNERS, JSON.stringify(partnersDB));
+            document.getElementById('p-name').value = '';
+            
+            closePartnerModal();
+            refreshCustomerDropdown();
+            renderPartnersView();
+            displayToast(`${name} added to Registry!`, "check_circle");
+        }
+        function removePartner(id) {
+            partnersDB = partnersDB.filter(p => p.id !== id);
+            localStorage.setItem(KEY_PARTNERS, JSON.stringify(partnersDB));
+            refreshCustomerDropdown();
+            renderPartnersView();
+            displayToast("Partner registry removed", "delete");
+        }
+
+        // Product SKU Rate catalog save management
+        function openNewGameModal() {
+            document.getElementById('modal-game').classList.remove('hidden');
+        }
+        function closeGameModal() {
+            document.getElementById('modal-game').classList.add('hidden');
+        }
+        function saveGameRate() {
+            const game = document.getElementById('g-name').value.trim();
+            const sku = document.getElementById('g-sku').value.trim();
+            const cost = parseFloat(document.getElementById('g-cost').value);
+            const retail = parseFloat(document.getElementById('g-retail').value);
+
+            if (!game || !sku || isNaN(cost) || isNaN(retail)) {
+                displayToast("Invalid SKU registry criteria", "error");
+                return;
+            }
+
+            const product = {
+                id: Date.now(),
+                game: game,
+                sku: sku,
+                cost: cost,
+                retail: retail
+            };
+
+            productRatesDB.push(product);
+            localStorage.setItem(KEY_PRODUCTS, JSON.stringify(productRatesDB));
+            
+            // Clean modal states
+            document.getElementById('g-name').value = '';
+            document.getElementById('g-sku').value = '';
+            document.getElementById('g-cost').value = '';
+            document.getElementById('g-retail').value = '';
+
+            closeGameModal();
+            refreshGamesDropdowns();
+            renderGamesGrid();
+            displayToast("New Game SKU registered!", "check_circle");
+        }
+
+        // Inject rich preloaded database records immediately to test UI features
+        function populateDemoData() {
+            salesDB = [...SEEDED_SALES];
+            partnersDB = [...SEEDED_PARTNERS];
+            productRatesDB = [...SEEDED_PRODUCTS];
+
+            localStorage.setItem(KEY_SALES, JSON.stringify(salesDB));
+            localStorage.setItem(KEY_PARTNERS, JSON.stringify(partnersDB));
+            localStorage.setItem(KEY_PRODUCTS, JSON.stringify(productRatesDB));
+
+            refreshCustomerDropdown();
+            refreshGamesDropdowns();
+            refreshLedgerView();
+            
+            // If active on other panels, update their visual content as well
+            renderPartnersView();
+            renderGamesGrid();
+            renderFinancialsData();
+
+            displayToast("Loaded 4 realistic transactions!", "cloud_done");
+        }
+
+        // Quick secure help chat interface bubble toggling
+        function toggleSupportChat() {
+            const chatPanel = document.getElementById('chat-panel');
+            chatPanel.classList.toggle('hidden');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Append User message
+            const uDiv = document.createElement('div');
+            uDiv.className = "bg-tdgc-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto text-right text-xs";
+            uDiv.textContent = msg;
+            chatMessages.appendChild(uDiv);
+
+            input.value = '';
+
+            // Generate AI Assistant simulated feedback response
+            setTimeout(() => {
+                const sDiv = document.createElement('div');
+                sDiv.className = "bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl max-w-[85%] text-slate-600 dark:text-slate-300 text-xs";
+                
+                let response = "Secure PHP ledger index validated. You can switch tabs on top to customize your default games and reseller catalog.";
+                if (msg.toLowerCase().includes("cost") || msg.toLowerCase().includes("capital")) {
+                    response = "Costs highlighted in red represent the purchasing price values from regional distributors. Make sure to audit capital regularly.";
+                } else if (msg.toLowerCase().includes("profit") || msg.toLowerCase().includes("margin")) {
+                    response = "Profits are computed automatically as Selling Price minus Capital Cost. Average margins on tokens normally exceed 20%.";
+                }
+
+                sDiv.textContent = response;
+                chatMessages.appendChild(sDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 750);
+        }
+
+        // Helper: Formatting string dates securely
+        function formatDisplayDate(dateString) {
+            if (!dateString) return '';
+            const raw = new Date(dateString);
+            if (isNaN(raw.getTime())) return dateString;
+            return raw.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        }
+
+        // Helper: Escaping HTML values securely to prevent script injections
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        // Watch window resizing triggers to scale SVG lines safely
+        window.addEventListener('resize', () => {
+            renderSvgTrendChart();
+        });
+
+        // Initialize state variables on page load
+        window.onload = function() {
+            refreshCustomerDropdown();
+            refreshGamesDropdowns();
+            refreshLedgerView();
+        }
+    </script>
+</body>
+</html>
